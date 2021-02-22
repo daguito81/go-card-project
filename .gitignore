@@ -89,3 +89,7 @@ fabric.properties
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+/.idea/.gitignore
+/.idea/card-project.iml
+/.idea/modules.xml
+/.idea/vcs.xml
