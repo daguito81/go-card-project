@@ -148,3 +148,45 @@ func Benchmark_Deck_ShuffleDeck(b *testing.B) {
 	}
 	os.Stdout = rescueStdout
 }
+
+// Write to file
+
+func Test_Deck_WriteReadToFile(t *testing.T) {
+
+	path := "testingDeck"
+
+	defer func() {
+		if err := os.Remove(path); err != nil {
+			panic(err)
+		}
+	}()
+
+	cards := CreateDeck(1)
+	cards.ShuffleDeck()
+	cards.WriteToFile(path)
+
+	loadedCards := ReadDeckFromFile(path)
+
+	if reflect.DeepEqual(CreateDeck(1), loadedCards) {
+		t.Errorf("Something wrong, loaded Deck is the same as new Deck")
+	}
+
+	if !reflect.DeepEqual(loadedCards, cards) {
+		t.Errorf("Error, saved and loaded deck are not the same")
+	}
+}
+
+func Benchmark_Deck_WriteReadToFile(b *testing.B) {
+	cards := CreateDeck(6)
+	path := "benchDeck"
+	defer func() {
+		if err := os.Remove(path); err != nil {
+			panic(err)
+		}
+	}()
+
+	for i := 0; i < b.N; i++ {
+		cards.WriteToFile(path)
+		cards = ReadDeckFromFile(path)
+	}
+}

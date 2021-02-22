@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 	"time"
 
 	"card-project/deck"
@@ -9,8 +10,15 @@ import (
 
 func main() {
 
-	newCards := deck.CreateDeck()
-	// newCards.Print()
+	newCards := deck.CreateDeck(1)
+	newCards.ShuffleDeck()
+	newCards.WriteToFile("./tmp/savedDeck")
+	loadedCards := deck.ReadDeckFromFile("./tmp/savedDeck")
+	if !reflect.DeepEqual(newCards, loadedCards) {
+		fmt.Println(reflect.DeepEqual(newCards, loadedCards))
+		panic("Something wrong with the decks")
+	}
+
 	newCards.ShuffleDeck()
 	hand1 := newCards.DealCards(2)
 	hand2 := newCards.DealCards(2)
@@ -22,7 +30,7 @@ func main() {
 	hand2.Print()
 	fmt.Println("Hand 3")
 	hand3.Print()
-	time.Sleep(5*time.Second)
+	time.Sleep(5 * time.Second)
 
 	table := newCards.DealCards(3) // Flop
 	fmt.Println("FLOP")
@@ -37,6 +45,5 @@ func main() {
 	fmt.Println("RIVER")
 	table.Print()
 	time.Sleep(time.Second)
-
 
 }
