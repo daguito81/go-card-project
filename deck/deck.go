@@ -22,14 +22,16 @@ func getCardValues() [13]string {
 }
 
 // CreateDeck will return a Deck value with 52 cards based on a standard deck of cards
-func CreateDeck() Deck {
+func CreateDeck(numDecks int) Deck {
 	var newDeck Deck
-
-	for _, suit := range getCardSuits() {
-		for _, value := range getCardValues() {
-			newDeck = append(newDeck, fmt.Sprintf("%s of %s", value, suit))
+	for i := 0; i < numDecks; i++ {
+		for _, suit := range getCardSuits() {
+			for _, value := range getCardValues() {
+				newDeck = append(newDeck, fmt.Sprintf("%s of %s", value, suit))
+			}
 		}
 	}
+
 	return newDeck
 }
 
@@ -51,10 +53,10 @@ func (d *Deck) DealCards(cardsPerHand int) Deck {
 }
 
 // Shuffle will randomly change the order of the cards in the Deck
-func (d *Deck) ShuffleDeck(){
+func (d *Deck) ShuffleDeck() {
 	rand.Seed(time.Now().UnixNano())
 	fmt.Println("Shuffling")
-	rand.Shuffle(len(*d), func(i, j int){
+	rand.Shuffle(len(*d), func(i, j int) {
 		(*d)[i], (*d)[j] = (*d)[j], (*d)[i]
 	})
 

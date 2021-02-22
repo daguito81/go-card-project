@@ -8,10 +8,14 @@ import (
 	"testing"
 )
 
+const casinoDecks = 6
+const cardsPerDeck = 52
+
 // Create Deck
 
-func Test_Deck_CreateDeck(t *testing.T) {
-	got := CreateDeck()
+func Test_Deck_CreateDeck_Single(t *testing.T) {
+
+	got := CreateDeck(1)
 	// Decks are always ordered the same when when created
 	if got[0] != "Ace of Hearts" {
 		t.Errorf("First Card should be Ace of Hearts, got: %s", got[0])
@@ -25,8 +29,18 @@ func Test_Deck_CreateDeck(t *testing.T) {
 	if got[len(got)-1] != "King of Spades" {
 		t.Errorf("Last Card should be King of Spades, got: %s", got[len(got)-1])
 	}
-	if len(got) != 52 {
+	if len(got) != cardsPerDeck {
 		t.Errorf("New Deck should have 52 cards, got: %d", len(got))
+	}
+
+}
+func Test_Deck_CreateDeck_Multi(t *testing.T) {
+	newDeck := CreateDeck(casinoDecks)
+	if len(newDeck) != cardsPerDeck*casinoDecks {
+		t.Errorf("New Deck should have %d cards, got: %d", casinoDecks*cardsPerDeck, len(newDeck))
+	}
+	if newDeck[0] != newDeck[52] {
+		t.Errorf("Decks are not in the right order: %s -> %s", newDeck[0], newDeck[52])
 	}
 }
 
@@ -34,7 +48,7 @@ func Benchmark_Deck_CreateDeck(b *testing.B) {
 	rescueStdout := os.Stdout
 	os.Stdout, _ = os.Open(os.DevNull)
 	for i := 0; i < b.N; i++ {
-		CreateDeck()
+		CreateDeck(1)
 	}
 	os.Stdout = rescueStdout
 }
@@ -62,7 +76,7 @@ func Test_Deck_Print(t *testing.T) {
 }
 
 func Benchmark_Deck_Print(b *testing.B) {
-	deck := CreateDeck()
+	deck := CreateDeck(1)
 	rescueStdout := os.Stdout
 	os.Stdout, _ = os.Open(os.DevNull)
 	for i := 0; i < b.N; i++ {
@@ -74,7 +88,7 @@ func Benchmark_Deck_Print(b *testing.B) {
 // Deal Cards
 func Test_Deck_DealCards(t *testing.T) {
 	const cardsPerHand = 5
-	deck := CreateDeck()
+	deck := CreateDeck(1)
 	originalDeckSize := len(deck)
 
 	hand1 := deck.DealCards(cardsPerHand)
@@ -109,17 +123,16 @@ func Benchmark_Deck_DealCards(b *testing.B) {
 	rescueStdout := os.Stdout
 	os.Stdout, _ = os.Open(os.DevNull)
 	for i := 0; i < b.N; i++ {
-		deck := CreateDeck()
+		deck := CreateDeck(1)
 		deck.DealCards(5)
 	}
 	os.Stdout = rescueStdout
 
 }
 
-
 func Test_Deck_ShuffleDeck(t *testing.T) {
-	cards := CreateDeck()
-	backupCards := CreateDeck()
+	cards := CreateDeck(1)
+	backupCards := CreateDeck(1)
 	cards.ShuffleDeck()
 	if reflect.DeepEqual(cards, backupCards) {
 		t.Errorf("Slices are equal, meaning there was no shuffling: %s -> %s", backupCards[1], cards[1])
@@ -127,10 +140,10 @@ func Test_Deck_ShuffleDeck(t *testing.T) {
 }
 
 func Benchmark_Deck_ShuffleDeck(b *testing.B) {
-	cards := CreateDeck()
+	cards := CreateDeck(1)
 	rescueStdout := os.Stdout
 	os.Stdout, _ = os.Open(os.DevNull)
-	for i:=0; i< b.N; i++{
+	for i := 0; i < b.N; i++ {
 		cards.ShuffleDeck()
 	}
 	os.Stdout = rescueStdout
