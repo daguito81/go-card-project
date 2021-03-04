@@ -190,3 +190,29 @@ func Benchmark_Deck_WriteReadToFile(b *testing.B) {
 		cards = ReadDeckFromFile(path)
 	}
 }
+
+func Test_Deck_GetValue(t *testing.T) {
+	sampleDeck := Deck{
+		"Two of Hearts",
+		"Eight of Clubs",
+		"Ace of Diamonds",
+		"Jack of Spades",
+	}
+	got := sampleDeck.GetValue()
+	want := 21
+	if got != want {
+		t.Errorf("GetValue Error: Want: %d Got: %d\n", want, got)
+	}
+}
+
+func BenchmarkDeck_GetValue(b *testing.B) {
+	sampleDeck := Deck{
+		"Two of Hearts",
+		"Eight of Clubs",
+		"Ace of Diamonds",
+		"Jack of Spades",
+	}
+	for i := 0; i < b.N; i++ {
+		sampleDeck.GetValue()
+	}
+}

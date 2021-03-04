@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -34,6 +35,7 @@ func CreateDeck(numDecks int) Deck {
 			}
 		}
 	}
+	fmt.Println("Created Deck with", numDecks, "packs of cards")
 
 	return newDeck
 }
@@ -45,7 +47,7 @@ func (d Deck) Print() {
 	}
 }
 
-// DealCards will deal the N ammount of cards from the top of the deck
+// DealCards will deal the N amount of cards from the top of the deck
 func (d *Deck) DealCards(cardsPerHand int) Deck {
 	if cardsPerHand > len(*d) {
 		log.Fatalln("Not enough cards to deal")
@@ -117,4 +119,46 @@ func ReadDeckFromFile(path string) Deck {
 	}
 
 	return cards
+}
+
+func (d *Deck) GetValue() int {
+	var values []int
+	for _, val := range *d {
+		switch strings.Fields(val)[0] {
+		case "Ace":
+			values = append(values, 1)
+		case "Two":
+			values = append(values, 2)
+		case "Three":
+			values = append(values, 3)
+		case "Four":
+			values = append(values, 4)
+		case "Five":
+			values = append(values, 5)
+		case "Six":
+			values = append(values, 6)
+		case "Seven":
+			values = append(values, 7)
+		case "Eight":
+			values = append(values, 8)
+		case "Nine":
+			values = append(values, 9)
+		case "Ten":
+			values = append(values, 10)
+		case "Jack":
+			values = append(values, 10)
+		case "Queen":
+			values = append(values, 10)
+		case "King":
+			values = append(values, 10)
+		}
+		// "Two", "Three", "Four",
+		// 	"Five", "Six", "Seven", "Eight",
+		// 	"Nine", "Ten", "Jack", "Queen", "King"
+	}
+	total := 0
+	for _, val := range values {
+		total += val
+	}
+	return total
 }
