@@ -9,15 +9,6 @@ import (
 )
 
 func main() {
-	//
-	// newCards := deck.CreateDeck(1)
-	// newCards.ShuffleDeck()
-	// newCards.WriteToFile("./tmp/savedDeck")
-	// loadedCards := deck.ReadDeckFromFile("./tmp/savedDeck")
-	// if !reflect.DeepEqual(newCards, loadedCards) {
-	// 	fmt.Println(reflect.DeepEqual(newCards, loadedCards))
-	// 	panic("Something wrong with the decks")
-	// }
 
 	state := game.StartGame()
 
