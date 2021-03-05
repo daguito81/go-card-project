@@ -3,9 +3,9 @@ package game
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
-	"runtime"
 	"strings"
 	"time"
 
@@ -47,9 +47,9 @@ func StartGame() State {
 	return gs
 }
 
-func MainLoop(gs *State) {
+func MainLoop(gs *State, r io.Reader) {
 	for gs.Active {
-		playerLoop(gs)
+		playerLoop(gs, r)
 		if !gs.Active {
 			break
 		}
@@ -60,11 +60,11 @@ func MainLoop(gs *State) {
 
 }
 
-func playerLoop(gs *State) {
+func playerLoop(gs *State, r io.Reader) {
 	for gs.PlayerActive {
 		gs.printState(gs.PlayerActive)
 		fmt.Println("Choose Hit, Stand or Exit")
-		choice, err := getChoice()
+		choice, err := getChoice(r)
 		if err != nil {
 			fmt.Println("Something went wrong, choose again")
 			continue
@@ -94,22 +94,16 @@ func houseLoop(gs *State) {
 	gs.Active = false
 }
 
-func getChoice() (string, error) {
-	reader := bufio.NewReader(os.Stdin)
+func getChoice(r io.Reader) (string, error) {
+	reader := bufio.NewReader(r)
 	fmt.Print("->")
 	text, err := reader.ReadString('\n')
 	if err != nil {
 		log.Printf("Error getting Choice from Stdin: %s", err)
 		return "ERROR", err
 	}
-	if runtime.GOOS == "windows" {
-		text = strings.Replace(text, "\n", "", -1) // Need \r\n for windows?
-		text = strings.Replace(text, "\r", "", -1) // Need \r\n for windows?
-
-	} else {
-		text = strings.Replace(text, "\n", "", -1)
-
-	}
+	text = strings.Replace(text, "\n", "", -1) // Need \r\n for windows?
+	text = strings.Replace(text, "\r", "", -1) // Need \r\n for windows?
 
 	return strings.ToLower(text), nil
 }
@@ -158,6 +152,11 @@ func (gs *State) rollingCheck() {
 }
 
 func (gs *State) finalCheck() {
+	if gs.PlayerBust && gs.HouseBust {
+		gs.Winner = ""
+		gs.Active = false
+		return
+	}
 	if gs.PlayerBust || gs.HouseBust {
 		return
 	}
@@ -168,8 +167,6 @@ func (gs *State) finalCheck() {
 	} else {
 		gs.Winner = ""
 	}
-	if gs.PlayerBust && gs.HouseBust {
-		gs.Winner = ""
-	}
+
 	gs.Active = false
 }

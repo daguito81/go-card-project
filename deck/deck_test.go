@@ -216,3 +216,50 @@ func BenchmarkDeck_GetValue(b *testing.B) {
 		sampleDeck.GetValue()
 	}
 }
+
+func Test_Deck_GetValueAces(t *testing.T) {
+	sampleDeck := Deck{
+		"Queen of Hearts",
+		"Ace of Spades",
+	}
+	got := sampleDeck.GetValue()
+	want := 21
+	if got != want {
+		t.Errorf("GetValue Error: Want: %d Got: %d\n", want, got)
+	}
+
+	sampleDeck = Deck{
+		"Two of Hearts",
+		"Ace of Spades",
+	}
+	got = sampleDeck.GetValue()
+	want = 13
+	if got != want {
+		t.Errorf("GetValue Error: Want: %d Got: %d\n", want, got)
+	}
+
+	sampleDeck = Deck{
+		"Two of Hearts",
+		"Ace of Spades",
+		"Jack of Clubs",
+		"Queen of Clubs",
+		"Ace of Hearts",
+	}
+	got = sampleDeck.GetValue()
+	want = 24
+	if got != want {
+		t.Errorf("GetValue Error: Want: %d Got: %d\n", want, got)
+	}
+
+	sampleDeck = Deck{
+		"Two of Hearts",
+		"Ace of Spades",
+		"Jack of Clubs",
+	}
+	got = sampleDeck.GetValue()
+	want = 13
+	if got != want {
+		t.Errorf("GetValue Error: Want: %d Got: %d\n", want, got)
+	}
+
+}

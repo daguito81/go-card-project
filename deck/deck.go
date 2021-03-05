@@ -123,10 +123,13 @@ func ReadDeckFromFile(path string) Deck {
 
 func (d *Deck) GetValue() int {
 	var values []int
+	var aceCount int
+
 	for _, val := range *d {
 		switch strings.Fields(val)[0] {
 		case "Ace":
-			values = append(values, 1)
+			aceCount += 1
+			values = append(values, 11)
 		case "Two":
 			values = append(values, 2)
 		case "Three":
@@ -159,6 +162,10 @@ func (d *Deck) GetValue() int {
 	total := 0
 	for _, val := range values {
 		total += val
+	}
+	for aceCount > 0 && total > 21 {
+		total -= 10
+		aceCount -= 1
 	}
 	return total
 }
