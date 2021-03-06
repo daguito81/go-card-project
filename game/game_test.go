@@ -290,3 +290,34 @@ func Benchmark_Game_update(b *testing.B) {
 	os.Stdout = rescueStdout
 
 }
+
+func Test_Game_houseLoop(t *testing.T) {
+	rescueStdout := os.Stdout
+	os.Stdout, _ = os.Open(os.DevNull)
+
+	state := StartGame()
+
+	houseLoop(&state)
+
+	if state.HouseScore < 16 {
+		t.Errorf("House stopped before reaching 16")
+	}
+	if state.Active == true {
+		t.Errorf("Game is still Active but House is done")
+	}
+
+	os.Stdout = rescueStdout
+}
+
+func Benchmark_Game_houseLoop(b *testing.B) {
+	rescueStdout := os.Stdout
+	os.Stdout, _ = os.Open(os.DevNull)
+
+	state := StartGame()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		houseLoop(&state)
+	}
+	os.Stdout = rescueStdout
+}
