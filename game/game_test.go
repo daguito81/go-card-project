@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"card-project/deck"
 )
 
 func Test_Game_StartGame(t *testing.T) {
@@ -160,6 +162,10 @@ func Test_Game_finalCheck(t *testing.T) {
 }
 
 func Benchmark_Game_finalCheck(b *testing.B) {
+
+	rescueStdout := os.Stdout
+	os.Stdout, _ = os.Open(os.DevNull)
+
 	state := StartGame()
 	rand.Seed(time.Now().UnixNano())
 	b.ResetTimer()
@@ -174,6 +180,7 @@ func Benchmark_Game_finalCheck(b *testing.B) {
 		}
 		state.finalCheck()
 	}
+	os.Stdout = rescueStdout
 }
 
 func Test_Game_rollingCheck(t *testing.T) {
@@ -242,4 +249,44 @@ func Benchmark_Game_rollingCheck(b *testing.B) {
 		state.rollingCheck()
 	}
 	os.Stdout = rescueStdout
+}
+
+func Test_Game_update(t *testing.T) {
+	rescueStdout := os.Stdout
+	os.Stdout, _ = os.Open(os.DevNull)
+
+	state := StartGame()
+	state.Player = make(deck.Deck, 0, 640)
+	state.House = make(deck.Deck, 0, 640)
+
+	state.Player = append(state.Player, "Two of Hearts")
+	state.Player = append(state.Player, "Ace of Hearts")
+
+	state.House = append(state.House, "Queen of Spades")
+	state.House = append(state.House, "King of Clubs")
+
+	state.update()
+
+	if state.PlayerScore != 13 {
+		t.Errorf("Player needs 13 points and has %d", state.PlayerScore)
+	}
+
+	if state.HouseScore != 20 {
+		t.Errorf("House needs 20 points and has %d", state.HouseScore)
+	}
+
+	os.Stdout = rescueStdout
+}
+
+func Benchmark_Game_update(b *testing.B) {
+	rescueStdout := os.Stdout
+	os.Stdout, _ = os.Open(os.DevNull)
+
+	state := StartGame()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		state.update()
+	}
+	os.Stdout = rescueStdout
+
 }
