@@ -47,6 +47,8 @@ func StartGame() State {
 	return gs
 }
 
+// MainLoop creates the main game loop on main.go
+// it receives a pointer to State and an io.Reader
 func MainLoop(gs *State, r io.Reader) {
 	for gs.Active {
 		playerLoop(gs, r)
