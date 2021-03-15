@@ -58,11 +58,12 @@ func (d *Deck) DealCards(cardsPerHand int) Deck {
 }
 
 // Shuffle will randomly change the order of the cards in the Deck
-func (d *Deck) ShuffleDeck() {
+// This doesnt need a pointer because deck is based on a slice which is a reference type
+func (d Deck) ShuffleDeck() {
 	rand.Seed(time.Now().UnixNano())
 	fmt.Println("Shuffling")
-	rand.Shuffle(len(*d), func(i, j int) {
-		(*d)[i], (*d)[j] = (*d)[j], (*d)[i]
+	rand.Shuffle(len(d), func(i, j int) {
+		d[i], d[j] = d[j], d[i]
 	})
 
 }
